@@ -4,6 +4,8 @@ namespace FirstMod
 {
     public class HelloWorld
     {
+        private static string version = "1.0.1";
+
         // Runs before and after Db.Initialize() in Assembly-CSharp.dll
         [HarmonyPatch(typeof(Db))]
         [HarmonyPatch("Initialize")]
@@ -11,12 +13,12 @@ namespace FirstMod
         {
             public static void Prefix()
             {
-                Debug.Log("FirstMod v1.0.0: Hello, world. Before Db.Initialize");
+                Debug.Log($"FirstMod v{version}: Hello, world. Before Db.Initialize");
             }
 
             public static void Postfix()
             {
-                Debug.Log("FirstMod v1.0.0: After Db.Initialize");
+                Debug.Log($"FirstMod v{version}: After Db.Initialize");
             }
         }
     }
