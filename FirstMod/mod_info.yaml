@@ -1,0 +1,4 @@
+minimumSupportedBuild: 468097  # the lowest game version that will load the mod
+version: 1.0.0  # version of your mod, displayed in the mod dialog
+APIVersion: 2  # required for Harmony 2, used since the mergedown changes
+# Note that supportedContent is deprecated, so is not in this file. See https://oxygennotincluded.wiki.gg/wiki/Versions/U55-658361

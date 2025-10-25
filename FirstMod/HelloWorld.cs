@@ -1,0 +1,23 @@
+﻿using HarmonyLib;
+
+namespace FirstMod
+{
+    public class HelloWorld
+    {
+        // Runs before and after Db.Initialize() in Assembly-CSharp.dll
+        [HarmonyPatch(typeof(Db))]
+        [HarmonyPatch("Initialize")]
+        public class Db_Initialize_Patch
+        {
+            public static void Prefix()
+            {
+                Debug.Log("FirstMod v1.0.0: Hello, world. Before Db.Initialize");
+            }
+
+            public static void Postfix()
+            {
+                Debug.Log("FirstMod v1.0.0: After Db.Initialize");
+            }
+        }
+    }
+}
