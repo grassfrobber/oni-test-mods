@@ -4,7 +4,7 @@ namespace FirstMod
 {
     public class HelloWorld
     {
-        public static string version = "0.0.2";
+        public static string version = "0.0.3";
 
         // Runs before and after Db.Initialize() in Assembly-CSharp.dll
         [HarmonyPatch(typeof(Db))]

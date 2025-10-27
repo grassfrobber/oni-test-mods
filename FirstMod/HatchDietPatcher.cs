@@ -19,7 +19,7 @@ namespace FirstMod
             string id, string name, string desc, string anim_file, bool is_baby,
             ref GameObject __result, HatchConfig __instance)
         {
-            Debug.Log($"FirstMod v{HelloWorld.version}: HatchDietPatcher.Postfix(): Starting for {name} critters");
+            Debug.Log($"FirstMod v{HelloWorld.version}: HatchDietPatcher.Postfix(): Starting for {id} critters");
 
             // CreateHatch() returned a Unity GameObject that contains the hatch's diet. We'll keep
             // this GameObject intact, but give it a new diet.
@@ -100,8 +100,8 @@ namespace FirstMod
             Debug.Log($"FirstMod v{HelloWorld.version}: HatchDietPatcher.Postfix(): Ending. Results:");
             Debug.Log($"- Old diet list length: {oldCount}. New: {newCount}");
             Debug.Log($"- Old diet tag length: {oldTagNames.Count}. New: {newTagNames.Count}");
-            Debug.Log($"- Old diet: {oldTagNames}");
-            Debug.Log($"- New diet: {newTagNames}");
+            Debug.Log($"- Old diet: {string.Join(", ", oldTagNames)}");
+            Debug.Log($"- New diet: {string.Join(", ", newTagNames)}");
         }
     }
 }
