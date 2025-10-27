@@ -22,11 +22,12 @@ namespace FirstMod
             Debug.Log($"FirstMod v{HelloWorld.version}: HatchDietPatcher.Postfix(): Starting for {id} critters");
 
             // CreateHatch() returned a Unity GameObject that contains the hatch's diet. We'll keep
-            // this GameObject intact, but give it a new diet.
+            // this GameObject intact, but give it a new diet
+
             // Get the SolidConsumerMonitor object attached to the GameObject
             var monitor = __result.GetDef<SolidConsumerMonitor.Def>();
 
-            // The monitor contains a Diet, which contains an array of Diet.Info objects
+            // The SolidConsumerMonitor contains a Diet, which contains an array of Diet.Info objects
             var diet = monitor.diet;
             var infos = diet.infos;
 
@@ -46,7 +47,7 @@ namespace FirstMod
                 // CreateHatch() created one Diet.Info object with several minerals -
                 // Sand, Sandstone, etc. It then created many Diet.Info objects, each with an
                 // individual duplicant food (FieldRation, MushBar, etc.). Include the mineral-based
-                // Diet.Info in the new diet, and exclude the others
+                // foods in the new diet, and exclude the others
                 bool isRockDiet = false;
 
                 foreach (var tag in consumedTags)
@@ -78,7 +79,8 @@ namespace FirstMod
                 }
             }
 
-            // Redo the SetupDiet() call from CreateHatch()
+            // Redo the SetupDiet() call from CreateHatch(). This will recreate the Diet and
+            // Diet.Info objects and add the Diet to the SolidConsumerMonitor
 
             // Get the value of HatchConfig.CALORIES_PER_KG_OF_ORE
             var calories_accessor = AccessTools.Field(typeof(HatchConfig), "CALORIES_PER_KG_OF_ORE");
