@@ -52,6 +52,9 @@ namespace FirstMod
 
                 foreach (var tag in consumedTags)
                 {
+                    // TODO: Potential bug: if the game changes the way that the rock diet is created -
+                    // individual Diet.Info objects for Sand, Sandstone, etc. instead of one Diet.Info
+                    // object - this will incorrectly exclude minerals other than Sand
                     if (tag.ToString() == "Sand")
                     {
                         isRockDiet = true;
