@@ -15,7 +15,7 @@ namespace FirstMod
 
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
 
-            LogAllInstructions(codes);
+            // LogAllInstructions(codes);
 
             // Make adult hatches use baby hatch navigation (no jumping or gap traversal).
             // Replaces this from BaseHatchConfig.BaseHatch():
@@ -44,9 +44,8 @@ namespace FirstMod
             //     }
             FindReplaceLdstrOperandOnce(codes, "WalkerBabyNavGrid", "WalkerNavGrid1x1", 2);
 
-            Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.Transpiler(): Code after changes");
-
-            LogAllInstructions(codes);
+            // Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.Transpiler(): Code after changes");
+            // LogAllInstructions(codes);
 
             return codes.AsEnumerable();
         }
