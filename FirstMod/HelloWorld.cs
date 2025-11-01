@@ -7,7 +7,7 @@ namespace FirstMod
     [HarmonyPatch("Initialize")]
     public class HelloWorld
     {
-        public static string version = "0.0.7";
+        public static string version = "0.0.8";
 
         public static void Prefix()
         {

@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FishFlopPatcher.cs" />
     <Compile Include="HatchDietPatcher.cs" />
     <Compile Include="HatchNavPatcher.cs" />
     <Compile Include="HelloWorld.cs" />
