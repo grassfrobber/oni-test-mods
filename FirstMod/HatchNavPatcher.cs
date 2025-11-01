@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace FirstMod
 {
@@ -16,7 +17,22 @@ namespace FirstMod
 
             LogAllInstructions(codes);
 
-            // Make no changes to code for now. Converting to List and back to make future editing easy
+            // Make adult hatches only able to move according to baby hatch rules (cannot jump up or down or across gaps)
+            // Replaces this line from BaseHatchConfig.BaseHatch():
+            //     string navGridName = "WalkerNavGrid1x1";
+            // With:
+            //     string navGridName = "WalkerBabyNavGrid";
+            // Which is followed by the baby hatch rules, from where I got the replacement string:
+            //     if (is_baby)
+            //     {
+            //         navGridName = "WalkerBabyNavGrid";
+            //     }
+            FindReplaceLdstrOperand(codes, "WalkerNavGrid1x1", "WalkerBabyNavGrid");
+
+            Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.Transpiler(): Code after changes");
+
+            LogAllInstructions(codes);
+
             return codes.AsEnumerable();
         }
 
@@ -33,6 +49,22 @@ namespace FirstMod
                 {
                     Debug.Log($"    Operand: {code.operand}");
                     Debug.Log($"    Operand type: {code.operand.GetType().FullName}");
+                }
+            }
+        }
+
+        public static void FindReplaceLdstrOperand(List<CodeInstruction> codes, string find, string replace)
+        {
+            for (var i = 0; i < codes.Count; i++)
+            {
+                if (codes[i].opcode == OpCodes.Ldstr && codes[i].operand is string s)
+                {
+                    if (s == find)
+                    {
+                        Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.FindReplaceLdstrOperand(): Found the instruction: #{i}: {codes[i]}\nReplacing operand with: {replace}");
+
+                        codes[i].operand = replace;
+                    }
                 }
             }
         }
