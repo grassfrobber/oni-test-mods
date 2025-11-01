@@ -17,17 +17,32 @@ namespace FirstMod
 
             LogAllInstructions(codes);
 
-            // Make adult hatches only able to move according to baby hatch rules (cannot jump up or down or across gaps)
-            // Replaces this line from BaseHatchConfig.BaseHatch():
+            // Make adult hatches use baby hatch navigation (no jumping or gap traversal).
+            // Replaces this from BaseHatchConfig.BaseHatch():
             //     string navGridName = "WalkerNavGrid1x1";
             // With:
             //     string navGridName = "WalkerBabyNavGrid";
-            // Which is followed by the baby hatch rules, from where I got the replacement string:
+            // Which is followed by the baby hatch rules, which gave the replacement string:
             //     if (is_baby)
             //     {
             //         navGridName = "WalkerBabyNavGrid";
             //     }
-            FindReplaceLdstrOperand(codes, "WalkerNavGrid1x1", "WalkerBabyNavGrid");
+            FindReplaceLdstrOperandOnce(codes, "WalkerNavGrid1x1", "WalkerBabyNavGrid");
+
+            // BUGGED: Make baby hatches use adult navigation rules.
+            // Causes baby hatches to freeze when trying to jump (due to missing animations).
+            // Included for educational purposes to demonstrate multiple IL edits.
+            // Replaces this:
+            //     if (is_baby)
+            //     {
+            //         navGridName = "WalkerBabyNavGrid";
+            //     }
+            // With:
+            //     if (is_baby)
+            //     {
+            //         navGridName = "WalkerNavGrid1x1";
+            //     }
+            FindReplaceLdstrOperandOnce(codes, "WalkerBabyNavGrid", "WalkerNavGrid1x1", 2);
 
             Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.Transpiler(): Code after changes");
 
@@ -53,17 +68,30 @@ namespace FirstMod
             }
         }
 
-        public static void FindReplaceLdstrOperand(List<CodeInstruction> codes, string find, string replace)
+        public static void FindReplaceLdstrOperandOnce(List<CodeInstruction> codes, string find, string replace, int occurrence = 1)
         {
+            int currentOccurrence = 1;
+
             for (var i = 0; i < codes.Count; i++)
             {
                 if (codes[i].opcode == OpCodes.Ldstr && codes[i].operand is string s)
                 {
                     if (s == find)
                     {
-                        Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.FindReplaceLdstrOperand(): Found the instruction: #{i}: {codes[i]}\nReplacing operand with: {replace}");
+                        if (currentOccurrence == occurrence)
+                        {
+                            Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.FindReplaceLdstrOperandOnce(): Found the instruction: #{i}: {codes[i]}\nReplacing operand with: {replace}");
 
-                        codes[i].operand = replace;
+                            codes[i].operand = replace;
+
+                            return;
+                        }
+                        else
+                        {
+                            Debug.Log($"FirstMod v{HelloWorld.version}: HatchNavPatcher.FindReplaceLdstrOperandOnce(): Skipping occurrence {currentOccurrence} of #{i}: {codes[i]}");
+                        }
+
+                        currentOccurrence++;
                     }
                 }
             }
