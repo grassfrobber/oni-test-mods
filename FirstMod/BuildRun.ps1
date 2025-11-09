@@ -14,6 +14,10 @@ $buildEdition = "Debug"
 
 ## Standard stuff ##
 
+$gameProcessName = "OxygenNotIncluded"
+
+$gracefulTimeoutSec = 30
+
 $projectPath = "$projectName.csproj"
 
 $buildPath = "bin\$buildEdition"
@@ -32,6 +36,9 @@ $oniSteamUrl = "steam://run/457140"
 
 function main() {
     try {
+        stopOniIfRunning
+
+
         ## Build project ##
 
         Write-Host "Building project..."
@@ -91,6 +98,38 @@ function main() {
     }
 }
 
+# Building the mod requires previously-installed DLLs to be unlocked (game not running)
+# and the game will only load DLLs on initial start up. So, try to gracefully, then forcefully,
+# shut down Oxygen Not Included
+function stopOniIfRunning {
+    Write-Host "Checking if Oxygen Not Included is running..."
+
+    $oniProc = Get-Process -Name $gameProcessName -ErrorAction SilentlyContinue
+
+    if ($oniProc) {
+        Write-Host "Running (PID: $($oniProc.Id)). Attempting graceful exit..."
+
+        # Try to close the game gracefully by sending a close signal to main window
+        $oniProc.CloseMainWindow() | Out-Null
+
+        $timeout = $gracefulTimeoutSec
+        $waited = 0
+
+        while (!$oniProc.HasExited -and $waited -lt $timeout) {
+            Start-Sleep -Seconds 1
+            $waited++
+        }
+
+        if (!$oniProc.HasExited) {
+            Write-Host "Did not exit gracefully - terminating..."
+
+            Stop-Process -Id $oniProc.Id -Force
+        } else {
+            Write-Host "Exited gracefully."
+        }
+    }
+}
+
 function getVersionedModInfoYamlContent($manifestFileName) {
     $srcCode = "HelloWorld.cs"
 
@@ -112,8 +151,6 @@ function getVersionedModInfoYamlContent($manifestFileName) {
     # In a multi-line search, replace the YAML's "version: #.#.#" line
     # with "version: <versionFromCsFile>"
     $yamlContent = $yamlContent -replace '(?m)^version:\s*[0-9\.]+', "version: $version"
-
-    Write-Host "Rewrote $manifestFileName with:`n$yamlContent"
 
     return $yamlContent
 }
